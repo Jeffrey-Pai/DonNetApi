@@ -31,18 +31,17 @@ namespace WebApiProject.Controllers
         }
 
         [HttpPost]
-        public ActionResult<User> CreateUser(User user)
+        public ActionResult<User> CreateUser(List<User> users)
         {
-            _users.Add(new User
+            foreach (var user in users)
             {
-                Id = _users.Any()
-                   ? _users.Max(card => card.Id) + 1
-                   : 0, // 臨時防呆，如果沒東西就從 0 開始
-                Name = user.Name,
-                Email = user.Email,
-                DateOfBirth = user.DateOfBirth,
-            });
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+                user.Id = _users.Any()
+                    ? _users.Max(card => card.Id) + 1
+                    : 0; // 防呆，如果没有用戶則從 0 開始
+                _users.Add(user);
+                Console.WriteLine($"ID:{user.Id},Name:{user.Name},Email:{user.Email},DateOfBirth:{user.DateOfBirth}");
+            }
+            return CreatedAtAction(nameof(GetUsers), users);
         }
 
         [HttpPut("{id}")]
